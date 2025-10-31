@@ -1,0 +1,38 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_db
+    username: user_admin
+    password: user_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+  profiles:
+    active: dev
+
+logging:
+  level:
+    com.fooddelivery: DEBUG
+    org.springframework.security: DEBUG
+
+app:
+  security:
+    jwt:
+      secret-key: mySuperSecretJWTKeyForUserService123!
+      expiration-time: 86400000 # 24 hours in milliseconds
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
