@@ -25,7 +25,8 @@ public class Address {
     @Column(nullable = false)
     private String country;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // One-to-One связь с User
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 }

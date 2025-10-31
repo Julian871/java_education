@@ -29,8 +29,8 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Address> addresses = new HashSet<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Address address;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
