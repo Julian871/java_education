@@ -1,6 +1,7 @@
 package com.delivery.user.dto;
 
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -11,6 +12,6 @@ public class UserDto {
     private String fullName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private AddressDto address;
+    private Set<AddressDto> addresses;
     private Set<RoleDto> roles;
 }

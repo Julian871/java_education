@@ -2,6 +2,8 @@ package com.delivery.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -25,8 +27,9 @@ public class Address {
     @Column(nullable = false)
     private String country;
 
-    // One-to-One связь с User
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User user;
 }
