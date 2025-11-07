@@ -1,9 +1,9 @@
 package com.delivery.user.controller;
 
-import com.delivery.user.dto.UserDto;
+import com.delivery.user.dto.response.UserResponseDto;
 import com.delivery.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -19,25 +19,25 @@ public class UserController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserDto> getCurrentUser() {
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponseDto getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserDto userDto = userService.getCurrentUser(email);
-        return ResponseEntity.ok(userDto);
+        return userService.getCurrentUser(email);
     }
 
     @PutMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponseDto updateUser(@Valid @RequestBody UserResponseDto userResponseDto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserDto updatedUser = userService.updateUserProfile(email, userDto);
-        return ResponseEntity.ok(updatedUser);
+        return userService.updateUserProfile(email, userResponseDto);
     }
 
     @DeleteMapping("/{id}")
     // @PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
     }
 }

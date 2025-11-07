@@ -31,7 +31,8 @@ app:
   security:
     jwt:
       secret-key: ${USER_JWT_SECRET}
-      expiration-time: ${USER_JWT_EXPIRATION}
+      access-token-expiration: ${USER_ACCESS_TOKEN_EXPIRATION}
+      refresh-token-expiration: ${USER_REFRESH_TOKEN_EXPIRATION}
 
 springdoc:
   api-docs:

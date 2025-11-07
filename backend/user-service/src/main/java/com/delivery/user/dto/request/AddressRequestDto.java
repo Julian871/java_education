@@ -1,11 +1,10 @@
-package com.delivery.user.dto;
+package com.delivery.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class AddressDto {
-
+public class AddressRequestDto {
     @NotBlank(message = "Street is required")
     private String street;
 

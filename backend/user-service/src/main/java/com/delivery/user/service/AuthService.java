@@ -1,9 +1,9 @@
 package com.delivery.user.service;
 
-import com.delivery.user.dto.AuthResponseDto;
-import com.delivery.user.dto.LoginRequestDto;
-import com.delivery.user.dto.RegisterRequestDto;
-import com.delivery.user.dto.UserDto;
+import com.delivery.user.dto.response.AuthResponseDto;
+import com.delivery.user.dto.request.LoginRequestDto;
+import com.delivery.user.dto.request.RegisterRequestDto;
+import com.delivery.user.dto.response.RegisterResponseDto;
 import com.delivery.user.entity.Address;
 import com.delivery.user.entity.Role;
 import com.delivery.user.entity.User;
@@ -33,7 +33,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public UserDto register(RegisterRequestDto registerRequest) {
+    public RegisterResponseDto register(RegisterRequestDto registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new ApiException("Email already registered", HttpStatus.CONFLICT);
         }
@@ -53,8 +53,8 @@ public class AuthService {
 
         if (registerRequest.getAddresses() != null && !registerRequest.getAddresses().isEmpty()) {
             Set<Address> addresses = registerRequest.getAddresses().stream()
-                    .map(addressDto -> {
-                        Address address = userMapper.toEntity(addressDto);
+                    .map(addressRequestDto -> {
+                        Address address = userMapper.toEntity(addressRequestDto);
                         address.setUser(user);
                         return address;
                     })
@@ -64,7 +64,14 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        return userMapper.toDto(savedUser);
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getEmail());
+
+        RegisterResponseDto response = userMapper.toRegisterDto(savedUser);
+
+        response.setAccessToken(accessToken);
+        response.setRefreshToken(refreshToken);
+        return response;
     }
 
     public AuthResponseDto login(LoginRequestDto loginRequest) {
@@ -75,11 +82,12 @@ public class AuthService {
             throw new ApiException("Invalid password", HttpStatus.UNAUTHORIZED);
         }
 
-        String token = jwtTokenProvider.generateToken(user.getEmail());
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getEmail());
 
         AuthResponseDto authResponse = new AuthResponseDto();
-        authResponse.setToken(token);
-        authResponse.setUser(userMapper.toDto(user));
+        authResponse.setAccessToken(accessToken);
+        authResponse.setRefreshToken(refreshToken);
 
         return authResponse;
     }

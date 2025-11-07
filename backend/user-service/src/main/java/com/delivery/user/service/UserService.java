@@ -1,6 +1,6 @@
 package com.delivery.user.service;
 
-import com.delivery.user.dto.UserDto;
+import com.delivery.user.dto.response.UserResponseDto;
 import com.delivery.user.entity.Address;
 import com.delivery.user.entity.User;
 import com.delivery.user.exception.ApiException;
@@ -22,23 +22,23 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public UserDto getCurrentUser(String email) {
+    public UserResponseDto getCurrentUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
         return userMapper.toDto(user);
     }
 
     @Transactional
-    public UserDto updateUserProfile(String email, UserDto userDto) {
+    public UserResponseDto updateUserProfile(String email, UserResponseDto userResponseDto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
-        user.setFullName(userDto.getFullName());
+        user.setFullName(userResponseDto.getFullName());
 
-        if (userDto.getAddresses() != null && !userDto.getAddresses().isEmpty()) {
+        if (userResponseDto.getAddresses() != null && !userResponseDto.getAddresses().isEmpty()) {
             user.getAddresses().clear();
 
-            Set<Address> addresses = userDto.getAddresses().stream()
+            Set<Address> addresses = userResponseDto.getAddresses().stream()
                     .map(addressDto -> {
                         Address address = userMapper.toEntity(addressDto);
                         address.setUser(user);
@@ -54,9 +54,10 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
+        int result = userRepository.deleteUserById(userId);
 
-        userRepository.delete(user);
+        if (result == 0) {
+            throw new ApiException("User not found", HttpStatus.NOT_FOUND);
+        }
     }
 }

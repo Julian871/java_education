@@ -34,23 +34,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
-            String email = jwtTokenProvider.getEmailFromToken(token);
+            try {
+                String email = jwtTokenProvider.getEmailFromToken(token);
+                System.out.println("📧 Authenticating: " + email);
 
-            User user = userRepository.findByEmail(email).orElse(null);
+                User user = userRepository.findByEmail(email).orElse(null);
 
-            if (user != null) {
-                List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getName()))
-                        .collect(Collectors.toList());
+                if (user != null) {
+                    List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+                            .map(role -> new SimpleGrantedAuthority(role.getName()))
+                            .collect(Collectors.toList());
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(email, null, authorities);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // Создаем аутентификацию
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(user, null, authorities);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    System.out.println("✅ AUTHENTICATED: " + user.getEmail() + " with roles: " + authorities);
+                } else {
+                    System.out.println("❌ User not found in database");
+                }
+            } catch (Exception e) {
+                System.out.println("❌ JWT processing error: " + e.getMessage());
+                // НЕ очищаем SecurityContext - пусть остается anonymous
             }
+        } else {
+            System.out.println("🚫 No valid token - remaining anonymous");
         }
 
+        System.out.println("======================");
         filterChain.doFilter(request, response);
     }
 
