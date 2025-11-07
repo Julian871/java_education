@@ -28,40 +28,40 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateAccessToken(String email) {
-        return generateToken(email, accessTokenExpirationMs);
+    public String generateAccessToken(Long userId) {
+        return generateToken(userId, accessTokenExpirationMs);
     }
 
-    public String generateRefreshToken(String email) {
-        return generateToken(email, refreshTokenExpirationMs);
+    public String generateRefreshToken(Long userId) {
+        return generateToken(userId, refreshTokenExpirationMs);
     }
 
-    private String generateToken(String email, long expirationMs) {
+    private String generateToken(Long userId, long expirationMs) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userId.toString())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public Map<String, String> generateTokenPair(String email) {
+    public Map<String, String> generateTokenPair(Long userId) {
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", generateAccessToken(email));
-        tokens.put("refreshToken", generateRefreshToken(email));
+        tokens.put("accessToken", generateAccessToken(userId));
+        tokens.put("refreshToken", generateRefreshToken(userId));
         return tokens;
     }
 
-    public String getEmailFromToken(String token) {
+    public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.getSubject();
+        return Long.parseLong(claims.getSubject());
     }
 
     public boolean validateToken(String token) {
@@ -83,33 +83,5 @@ public class JwtTokenProvider {
             log.error("JWT validation error");
         }
         return false;
-    }
-
-    public boolean isTokenExpired(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.getExpiration().before(new Date());
-        } catch (ExpiredJwtException ex) {
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    public long getRemainingTime(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.getExpiration().getTime() - System.currentTimeMillis();
-        } catch (Exception ex) {
-            return 0;
-        }
     }
 }

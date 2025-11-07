@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -33,37 +35,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = getTokenFromRequest(request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            try {
-                String email = jwtTokenProvider.getEmailFromToken(token);
-                System.out.println("📧 Authenticating: " + email);
+        try {
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                System.out.println("point 1");
 
-                User user = userRepository.findByEmail(email).orElse(null);
+                Long userId = jwtTokenProvider.getUserIdFromToken(token);
+
+                User user = userRepository.findById(userId).orElse(null);
 
                 if (user != null) {
+                    System.out.println("point 2");
                     List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
                             .map(role -> new SimpleGrantedAuthority(role.getName()))
                             .collect(Collectors.toList());
 
-                    // Создаем аутентификацию
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(user, null, authorities);
+                            new UsernamePasswordAuthenticationToken(userId, null, authorities);
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    System.out.println("✅ AUTHENTICATED: " + user.getEmail() + " with roles: " + authorities);
                 } else {
-                    System.out.println("❌ User not found in database");
+                    SecurityContextHolder.clearContext();
+                    log.warn("User not found in database for ID: {}", userId);
                 }
-            } catch (Exception e) {
-                System.out.println("❌ JWT processing error: " + e.getMessage());
-                // НЕ очищаем SecurityContext - пусть остается anonymous
+            } else {
+                // Нет токена или токен невалидный
+                log.debug("No valid JWT token found in request");
             }
-        } else {
-            System.out.println("🚫 No valid token - remaining anonymous");
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+            log.error("JWT authentication error: {}", e.getMessage());
         }
 
-        System.out.println("======================");
         filterChain.doFilter(request, response);
     }
 

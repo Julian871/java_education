@@ -21,16 +21,16 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public UserResponseDto getCurrentUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userService.getCurrentUser(email);
+        long userId = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getCurrentUser(userId);
     }
 
     @PutMapping("/me")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public UserResponseDto updateUser(@Valid @RequestBody UserResponseDto userResponseDto) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userService.updateUserProfile(email, userResponseDto);
+        long userId = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.updateUserProfile(userId, userResponseDto);
     }
 
     @DeleteMapping("/{id}")

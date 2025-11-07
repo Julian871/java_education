@@ -64,8 +64,8 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getEmail());
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId());
 
         RegisterResponseDto response = userMapper.toRegisterDto(savedUser);
 
@@ -82,8 +82,8 @@ public class AuthService {
             throw new ApiException("Invalid password", HttpStatus.UNAUTHORIZED);
         }
 
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getEmail());
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId());
 
         AuthResponseDto authResponse = new AuthResponseDto();
         authResponse.setAccessToken(accessToken);

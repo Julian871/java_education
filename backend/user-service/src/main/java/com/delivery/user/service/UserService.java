@@ -22,15 +22,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public UserResponseDto getCurrentUser(String email) {
-        User user = userRepository.findByEmail(email)
+    public UserResponseDto getCurrentUser(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
         return userMapper.toDto(user);
     }
 
     @Transactional
-    public UserResponseDto updateUserProfile(String email, UserResponseDto userResponseDto) {
-        User user = userRepository.findByEmail(email)
+    public UserResponseDto updateUserProfile(Long userId, UserResponseDto userResponseDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
         user.setFullName(userResponseDto.getFullName());
@@ -54,10 +54,6 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId) {
-        int result = userRepository.deleteUserById(userId);
-
-        if (result == 0) {
-            throw new ApiException("User not found", HttpStatus.NOT_FOUND);
-        }
+        userRepository.deleteById(userId);
     }
 }
