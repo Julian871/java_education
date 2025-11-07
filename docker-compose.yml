@@ -6,26 +6,27 @@ services:
     image: postgres:15
     container_name: postgres-user
     environment:
-      POSTGRES_DB: user_db
-      POSTGRES_USER: user_admin
-      POSTGRES_PASSWORD: user_password
+      POSTGRES_DB: ${POSTGRES_USER_DB}
+      POSTGRES_USER: ${POSTGRES_USER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD}
     ports:
-      - "5456:5432"
+      - "${POSTGRES_USER_PORT}:5432"
     volumes:
       - postgres_user_data:/var/lib/postgresql/data
     networks:
       - food-delivery-network
+
 
   # Database for Restaurant Service
   postgres-restaurant:
     image: postgres:15
     container_name: postgres-restaurant
     environment:
-      POSTGRES_DB: restaurant_db
-      POSTGRES_USER: restaurant_admin
-      POSTGRES_PASSWORD: restaurant_password
+      POSTGRES_DB: ${POSTGRES_RESTAURANT_DB}
+      POSTGRES_USER: ${POSTGRES_RESTAURANT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_RESTAURANT_PASSWORD}
     ports:
-      - "5457:5432"
+      - "${POSTGRES_RESTAURANT_PORT}:5432"
     volumes:
       - postgres_restaurant_data:/var/lib/postgresql/data
     networks:
@@ -36,11 +37,11 @@ services:
     image: postgres:15
     container_name: postgres-order
     environment:
-      POSTGRES_DB: order_db
-      POSTGRES_USER: order_admin
-      POSTGRES_PASSWORD: order_password
+      POSTGRES_DB: ${POSTGRES_ORDER_DB}
+      POSTGRES_USER: ${POSTGRES_ORDER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ORDER_PASSWORD}
     ports:
-      - "5458:5432"
+      - "${POSTGRES_ORDER_PORT}:5432"
     volumes:
       - postgres_order_data:/var/lib/postgresql/data
     networks:
