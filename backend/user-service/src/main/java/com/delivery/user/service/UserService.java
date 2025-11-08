@@ -58,6 +58,9 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
+
         userRepository.deleteById(userId);
     }
 
