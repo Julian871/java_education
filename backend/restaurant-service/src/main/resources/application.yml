@@ -31,6 +31,10 @@ logging:
   level:
     com.fooddelivery: DEBUG
     org.flywaydb: DEBUG
+app:
+  security:
+    jwt:
+      secret-key: ${RESTAURANT_JWT_SECRET}
 
 springdoc:
   api-docs:
