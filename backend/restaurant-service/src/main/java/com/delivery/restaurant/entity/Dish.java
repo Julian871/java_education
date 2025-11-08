@@ -23,6 +23,7 @@ public class Dish {
     @Column(nullable = false)
     private Integer price;
 
+    @Column(nullable = false)
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
