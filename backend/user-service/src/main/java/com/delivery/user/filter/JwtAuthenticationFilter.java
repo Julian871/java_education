@@ -1,7 +1,5 @@
 package com.delivery.user.filter;
 
-import com.delivery.user.entity.User;
-import com.delivery.user.repository.UserRepository;
 import com.delivery.user.util.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,29 +34,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {
-                System.out.println("point 1");
 
                 Long userId = jwtTokenProvider.getUserIdFromToken(token);
+                List<String> roles = jwtTokenProvider.getRolesFromToken(token);
 
-                User user = userRepository.findById(userId).orElse(null);
+                List<SimpleGrantedAuthority> authorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList());
 
-                if (user != null) {
-                    System.out.println("point 2");
-                    List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                            .map(role -> new SimpleGrantedAuthority(role.getName()))
-                            .collect(Collectors.toList());
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userId, null, authorities);
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    SecurityContextHolder.clearContext();
-                    log.warn("User not found in database for ID: {}", userId);
-                }
+                log.debug("Authenticated user ID: {} with roles: {}", userId, roles);
             } else {
-                // Нет токена или токен невалидный
                 log.debug("No valid JWT token found in request");
             }
         } catch (Exception e) {

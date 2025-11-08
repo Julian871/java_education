@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -28,31 +27,29 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateAccessToken(Long userId) {
-        return generateToken(userId, accessTokenExpirationMs);
+    public String generateAccessToken(Long userId, List<String> roles) {
+        return generateToken(userId, roles, accessTokenExpirationMs);
     }
 
     public String generateRefreshToken(Long userId) {
-        return generateToken(userId, refreshTokenExpirationMs);
+        return generateToken(userId, null, refreshTokenExpirationMs);
     }
 
-    private String generateToken(Long userId, long expirationMs) {
+    private String generateToken(Long userId, List<String> roles, long expirationMs) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
 
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .setSubject(userId.toString())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256);
 
-    public Map<String, String> generateTokenPair(Long userId) {
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", generateAccessToken(userId));
-        tokens.put("refreshToken", generateRefreshToken(userId));
-        return tokens;
+        if (roles != null && !roles.isEmpty()) {
+            builder.claim("roles", roles);
+        }
+
+        return builder.compact();
     }
 
     public Long getUserIdFromToken(String token) {
@@ -62,6 +59,18 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
         return Long.parseLong(claims.getSubject());
+    }
+
+    public List<String> getRolesFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        @SuppressWarnings("unchecked")
+        List<String> roles = (List<String>) claims.get("roles");
+        return roles != null ? roles : List.of();
     }
 
     public boolean validateToken(String token) {

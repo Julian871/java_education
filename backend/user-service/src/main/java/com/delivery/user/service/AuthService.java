@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,10 +39,10 @@ public class AuthService {
             throw new ApiException("Email already registered", HttpStatus.CONFLICT);
         }
 
-        Role customerRole = roleRepository.findByName("ROLE_CUSTOMER")
+        Role customerRole = roleRepository.findByName("CUSTOMER")
                 .orElseGet(() -> {
                     Role newRole = new Role();
-                    newRole.setName("ROLE_CUSTOMER");
+                    newRole.setName("CUSTOMER");
                     return roleRepository.save(newRole);
                 });
 
@@ -64,7 +65,11 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getId());
+        List<String> roles = savedUser.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
+        String accessToken = jwtTokenProvider.generateAccessToken(savedUser.getId(), roles);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId());
 
         RegisterResponseDto response = userMapper.toRegisterDto(savedUser);
@@ -82,7 +87,11 @@ public class AuthService {
             throw new ApiException("Invalid password", HttpStatus.UNAUTHORIZED);
         }
 
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getId());
+        List<String> roles = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getId(), roles);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId());
 
         AuthResponseDto authResponse = new AuthResponseDto();
