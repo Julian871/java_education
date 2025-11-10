@@ -5,13 +5,11 @@ import com.delivery.restaurant.dto.response.RestaurantResponseDto;
 import com.delivery.restaurant.entity.Restaurant;
 import com.delivery.restaurant.exception.ApiException;
 import com.delivery.restaurant.mapper.RestaurantMapper;
-import com.delivery.restaurant.repository.DishRepository;
 import com.delivery.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class RestaurantAdminService {
 
     private final RestaurantRepository restaurantRepository;
-    private final DishRepository dishRepository;
     private final RestaurantMapper restaurantMapper;
 
     public RestaurantResponseDto createRestaurant(RestaurantRequestDto restaurantRequest) {
@@ -28,12 +25,12 @@ public class RestaurantAdminService {
         }
 
         Restaurant restaurant = restaurantMapper.toEntity(restaurantRequest);
+        restaurant.setCuisine(restaurant.getCuisine().toLowerCase());
 
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
         return restaurantMapper.toDto(savedRestaurant);
     }
 
-    @Transactional
     public RestaurantResponseDto updateRestaurant(RestaurantRequestDto restaurantRequest, Long restaurantId) {
 
         if(restaurantRepository.existsByNameAndIdNot(restaurantRequest.getName(), restaurantId)) {
@@ -46,18 +43,16 @@ public class RestaurantAdminService {
 
 
         restaurant.setName(restaurantRequest.getName());
-        restaurant.setCuisine(restaurantRequest.getCuisine());
+        restaurant.setCuisine(restaurantRequest.getCuisine().toLowerCase());
         restaurant.setAddress(restaurantRequest.getAddress());
 
-        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
-        return restaurantMapper.toDto(updatedRestaurant);
+        return restaurantMapper.toDto(restaurant);
     }
 
-    @Transactional
-    public void deleteRestaurant(@PathVariable Long restaurantId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+    public void deleteRestaurant(Long restaurantId) {
+        restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new ApiException("Restaurant not found", HttpStatus.NOT_FOUND));
 
-        restaurantRepository.delete(restaurant);
+        restaurantRepository.deleteById(restaurantId);
     }
 }

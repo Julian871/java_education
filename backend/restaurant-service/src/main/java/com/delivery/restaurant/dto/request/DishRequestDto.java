@@ -25,7 +25,4 @@ public class DishRequestDto {
     @NotBlank(message = "Image is required")
     @URL(message = "Image URL must be valid")
     private String imageUrl;
-
-    @NotNull(message = "Restaurant is required")
-    private Long restaurantId;
 }
