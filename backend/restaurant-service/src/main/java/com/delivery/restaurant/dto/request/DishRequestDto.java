@@ -11,11 +11,11 @@ import org.hibernate.validator.constraints.URL;
 public class DishRequestDto {
 
     @NotBlank(message = "Name is required")
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 20, message = "Min length - 3, max length - 20")
     private String name;
 
     @NotBlank(message = "Description is required")
-    @Size(min = 10, max = 50)
+    @Size(min = 10, max = 50, message = "Min length - 10, max length - 50")
     private String description;
 
     @NotNull(message = "Price is required")
