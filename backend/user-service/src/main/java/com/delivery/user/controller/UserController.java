@@ -18,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     public UserResponseDto getCurrentUser() {
         long userId = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     public UserResponseDto updateUser(@Valid @RequestBody UserResponseDto userResponseDto) {
         long userId = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/admin/role/{id}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     public void giveAdminRole(@PathVariable Long id) {
         userService.updateRole(id);

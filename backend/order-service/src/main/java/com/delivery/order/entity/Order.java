@@ -25,10 +25,10 @@ public class Order {
     private LocalDateTime orderDate;
 
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "restaurant_id", nullable = false)
-    private Integer restaurantId;
+    private Long restaurantId;
 
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
@@ -38,4 +38,9 @@ public class Order {
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Payment payment;
+
+    @PrePersist
+    protected void onCreate() {
+        orderDate = LocalDateTime.now();
+    }
 }

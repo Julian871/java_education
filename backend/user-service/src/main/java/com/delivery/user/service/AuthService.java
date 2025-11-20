@@ -39,10 +39,10 @@ public class AuthService {
             throw new ApiException("Email already registered", HttpStatus.CONFLICT);
         }
 
-        Role customerRole = roleRepository.findByName("CUSTOMER")
+        Role customerRole = roleRepository.findByName("USER")
                 .orElseGet(() -> {
                     Role newRole = new Role();
-                    newRole.setName("CUSTOMER");
+                    newRole.setName("USER");
                     return roleRepository.save(newRole);
                 });
 
