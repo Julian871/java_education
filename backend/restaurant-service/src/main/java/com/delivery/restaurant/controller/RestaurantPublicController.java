@@ -20,7 +20,7 @@ public class RestaurantPublicController {
     @ResponseStatus(HttpStatus.OK)
     public List<RestaurantResponseDto> getRestaurants(@RequestParam(required = false) String cuisine,
                                                       @RequestParam(required = false) Double rating) {
-        return restaurantPublicService.getRestaurants(cuisine.toLowerCase(), rating);
+        return restaurantPublicService.getRestaurants(cuisine, rating);
     }
 
     @GetMapping("/{id}")

@@ -32,7 +32,7 @@ public class RestaurantPublicService {
 
         if (cuisine != null && !cuisine.isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("cuisine"), cuisine));
+                    cb.equal(root.get("cuisine"), cuisine.toLowerCase()));
         }
 
         if (minRating != null) {
