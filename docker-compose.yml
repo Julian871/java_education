@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Database for User Service
   postgres-user:
@@ -7,7 +5,7 @@ services:
     container_name: postgres-user
     environment:
       POSTGRES_DB: ${POSTGRES_USER_DB}
-      POSTGRES_USER: ${POSTGRES_USER_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD}
     ports:
       - "${POSTGRES_USER_PORT}:5432"
@@ -15,7 +13,11 @@ services:
       - postgres_user_data:/var/lib/postgresql/data
     networks:
       - food-delivery-network
-
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_USER_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Database for Restaurant Service
   postgres-restaurant:
@@ -31,6 +33,11 @@ services:
       - postgres_restaurant_data:/var/lib/postgresql/data
     networks:
       - food-delivery-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_RESTAURANT_USER} -d ${POSTGRES_USER_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Database for Order Service
   postgres-order:
@@ -44,6 +51,76 @@ services:
       - "${POSTGRES_ORDER_PORT}:5432"
     volumes:
       - postgres_order_data:/var/lib/postgresql/data
+    networks:
+      - food-delivery-network
+    healthcheck: # ← ДОБАВИТЬ HEALTHCHECK
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_ORDER_USER} -d ${POSTGRES_USER_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # User Service
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "${USER_SERVICE_PORT}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-user:5432/${POSTGRES_USER_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_USER_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ACCESS_TOKEN_EXPIRATION: ${ACCESS_TOKEN_EXPIRATION}
+      REFRESH_TOKEN_EXPIRATION: ${REFRESH_TOKEN_EXPIRATION}
+    depends_on:
+      postgres-user:
+        condition: service_healthy
+    networks:
+      - food-delivery-network
+
+  # Restaurant Service
+  restaurant-service:
+    build:
+      context: ./backend/restaurant-service
+      dockerfile: Dockerfile
+    container_name: restaurant-service
+    ports:
+      - "${RESTAURANT_SERVICE_PORT}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-restaurant:5432/${POSTGRES_RESTAURANT_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_RESTAURANT_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_RESTAURANT_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      postgres-restaurant:
+        condition: service_healthy
+    networks:
+      - food-delivery-network
+
+  # Order Service
+  order-service:
+    build:
+      context: ./backend/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    ports:
+      - "${ORDER_SERVICE_PORT}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-order:5432/${POSTGRES_ORDER_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_ORDER_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_ORDER_PASSWORD}
+      USER_SERVICE_URL: http://user-service:8080
+      RESTAURANT_SERVICE_URL: http://restaurant-service:8080
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      postgres-order:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      restaurant-service:
+        condition: service_started
     networks:
       - food-delivery-network
 

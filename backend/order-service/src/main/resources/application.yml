@@ -1,51 +1,36 @@
 server:
-  port: ${ORDER_SERVICE_PORT}
+  port: 8080
 
 spring:
   application:
     name: order-service
   datasource:
-    url: ${ORDER_DB_URL}
-    username: ${ORDER_DB_USERNAME}
-    password: ${ORDER_DB_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        show_sql: false
+        show_sql: true
         format_sql: true
-  profiles:
-    active: dev
-  config:
-    import: optional:file:.env
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
-    baseline-on-migrate: true
-    clean-disabled: false
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
-logging:
-  level:
-    com.fooddelivery: DEBUG
-    org.flywaydb: DEBUG
 app:
+  services:
+    user: ${USER_SERVICE_URL}
+    restaurant: ${RESTAURANT_SERVICE_URL}
   security:
     jwt:
-      secret-key: ${ORDER_JWT_SECRET}
+      secret-key: ${JWT_SECRET}
 
 springdoc:
   api-docs:
-    path: ${API_DOCS_PATH}
+    path: /v3/api-docs
   swagger-ui:
-    path: ${SWAGGER_UI_PATH}
+    path: /swagger-ui.html
