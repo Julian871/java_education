@@ -8,6 +8,7 @@ import Dashboard from './pages/customer/Dashboard';
 import Layout from './components/common/Layout';
 import RestaurantList from "./pages/customer/RestaurantList.tsx";
 import Profile from "./pages/customer/Profile.tsx";
+import EditProfile from "./pages/customer/EditProfile.tsx";
 
 const App: React.FC = () => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -43,6 +44,16 @@ const App: React.FC = () => {
                         isAuthenticated ? (
                             <Layout>
                                 <Profile />
+                            </Layout>
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    } />
+
+                    <Route path="/profile/edit" element={
+                        isAuthenticated ? (
+                            <Layout>
+                                <EditProfile />
                             </Layout>
                         ) : (
                             <Navigate to="/login" />

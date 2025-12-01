@@ -1,5 +1,6 @@
 package com.delivery.user.service;
 
+import com.delivery.user.dto.request.UpdateUserRequestDto;
 import com.delivery.user.dto.response.UserResponseDto;
 import com.delivery.user.entity.Address;
 import com.delivery.user.entity.Role;
@@ -33,16 +34,16 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUserProfile(Long userId, UserResponseDto userResponseDto) {
+    public UserResponseDto updateUserProfile(Long userId, UpdateUserRequestDto updateUserRequestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
-        user.setFullName(userResponseDto.getFullName());
+        user.setFullName(updateUserRequestDto.getFullName());
 
-        if (userResponseDto.getAddresses() != null && !userResponseDto.getAddresses().isEmpty()) {
+        if (updateUserRequestDto.getAddresses() != null && !updateUserRequestDto.getAddresses().isEmpty()) {
             user.getAddresses().clear();
 
-            Set<Address> addresses = userResponseDto.getAddresses().stream()
+            Set<Address> addresses = updateUserRequestDto.getAddresses().stream()
                     .map(addressDto -> {
                         Address address = userMapper.toEntity(addressDto);
                         address.setUser(user);

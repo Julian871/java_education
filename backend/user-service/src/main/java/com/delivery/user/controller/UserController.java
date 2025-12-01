@@ -1,5 +1,6 @@
 package com.delivery.user.controller;
 
+import com.delivery.user.dto.request.UpdateUserRequestDto;
 import com.delivery.user.dto.response.UserResponseDto;
 import com.delivery.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,9 @@ public class UserController {
     @PutMapping("/me")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto updateUser(@Valid @RequestBody UserResponseDto userResponseDto) {
+    public UserResponseDto updateUser(@Valid @RequestBody UpdateUserRequestDto updateUserRequestDto) {
         long userId = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.updateUserProfile(userId, userResponseDto);
+        return userService.updateUserProfile(userId, updateUserRequestDto);
     }
 
     @DeleteMapping("/{id}")

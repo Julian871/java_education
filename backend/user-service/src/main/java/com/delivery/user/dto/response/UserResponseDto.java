@@ -1,6 +1,7 @@
 package com.delivery.user.dto.response;
 
 import com.delivery.user.dto.request.AddressRequestDto;
+import com.delivery.user.entity.Role;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,4 +15,5 @@ public class UserResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Set<AddressRequestDto> addresses;
+    private Set<Role> roles;
 }
