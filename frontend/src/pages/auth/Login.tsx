@@ -6,6 +6,17 @@ import { loginSuccess } from '../../store/slices/authSlice';
 import {api} from "../../services/api.ts";
 import { Link } from 'react-router-dom';
 
+interface Role {
+    id: number;
+    name: string;
+}
+
+interface AuthResponseDto {
+    accessToken: string;
+    refreshToken: string;
+    roles: Role[];
+}
+
 const Login: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -17,22 +28,25 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const loginResponse = await api.post('/auth/login', formData);
-            const { accessToken } = loginResponse.data;
+            const response = await api.post('/auth/login', formData);
+            const authData = response.data;
 
-            localStorage.setItem('token', accessToken);
+            console.log('🔑 Login successful:', {
+                token: authData.accessToken,
+                fullName: authData.fullName,
+                roles: authData.roles
+            });
 
-            const userResponse = await api.get('/users/me');
-            const userData = userResponse.data;
-
+            // 👇 Сохраняем только нужные данные
             dispatch(loginSuccess({
-                token: accessToken,
+                token: authData.accessToken,
                 user: {
-                    id: userData.id,
-                    email: userData.email,
-                    fullName: userData.fullName
+                    fullName: authData.fullName,
+                    roles: authData.roles || [],
+                    email: formData.email // 👈 Берем email из формы
                 }
             }));
+
             navigate('/');
         } catch (error) {
             console.error('Login failed:', error);

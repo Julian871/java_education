@@ -97,6 +97,8 @@ public class AuthService {
         AuthResponseDto authResponse = new AuthResponseDto();
         authResponse.setAccessToken(accessToken);
         authResponse.setRefreshToken(refreshToken);
+        authResponse.setRoles(user.getRoles());
+        authResponse.setFullName(user.getFullName());
 
         return authResponse;
     }

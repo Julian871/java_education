@@ -11,6 +11,8 @@ const Header: React.FC = () => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
     const user = useSelector((state: RootState) => state.auth.user);
 
+    const isAdmin = user?.roles?.some((role: any) => role.name === 'ADMIN');
+
     const handleLogout = () => {
         dispatch(logout());
         navigate('/login');
@@ -28,7 +30,6 @@ const Header: React.FC = () => {
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     {isAuthenticated ? (
                         <>
-                            {/* 👇 Outlined кнопка */}
                             <Button
                                 variant="outlined"
                                 color="inherit"
@@ -43,7 +44,17 @@ const Header: React.FC = () => {
                                 👤 {user.fullName}
                             </Button>
 
-                            {/* 👇 Contained кнопка */}
+                            {isAdmin && (
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    component={Link}
+                                    to="/admin"
+                                >
+                                    admin
+                                </Button>
+                            )}
+
                             <Button variant="contained" color="warning" onClick={handleLogout}>
                                 Logout
                             </Button>

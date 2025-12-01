@@ -9,9 +9,16 @@ import Layout from './components/common/Layout';
 import RestaurantList from "./pages/customer/RestaurantList.tsx";
 import Profile from "./pages/customer/Profile.tsx";
 import EditProfile from "./pages/customer/EditProfile.tsx";
+import AdminPanel from "./pages/admin/AdminPanel.tsx";
+import CreateRestaurant from "./pages/admin/CreateRestaurant.tsx";
+import ManageRestaurants from "./pages/admin/ManageRestaurants.tsx";
+import ManageDishes from "./pages/admin/ManageDishes.tsx";
 
 const App: React.FC = () => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+    const user = useSelector((state: RootState) => state.auth.user);
+
+    const isAdmin = user?.roles?.some((role: any) => role.name === 'ADMIN');
 
     return (
         <Router>
@@ -55,6 +62,54 @@ const App: React.FC = () => {
                             <Layout>
                                 <EditProfile />
                             </Layout>
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    } />
+
+                    <Route path="/admin" element={
+                        isAuthenticated && isAdmin ? (
+                            <Layout>
+                                <AdminPanel />
+                            </Layout>
+                        ) : isAuthenticated ? (
+                            <Navigate to="/" />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    } />
+
+                    <Route path="/admin/restaurants/create" element={
+                        isAuthenticated && isAdmin ? (
+                            <Layout>
+                                <CreateRestaurant />
+                            </Layout>
+                        ) : isAuthenticated ? (
+                            <Navigate to="/" />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    } />
+
+                    <Route path="/admin/restaurants" element={
+                        isAuthenticated && isAdmin ? (
+                            <Layout>
+                                <ManageRestaurants />
+                            </Layout>
+                        ) : isAuthenticated ? (
+                            <Navigate to="/" />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    } />
+
+                    <Route path="/admin/restaurants/:restaurantId/dishes" element={
+                        isAuthenticated && isAdmin ? (
+                            <Layout>
+                                <ManageDishes />
+                            </Layout>
+                        ) : isAuthenticated ? (
+                            <Navigate to="/" />
                         ) : (
                             <Navigate to="/login" />
                         )
