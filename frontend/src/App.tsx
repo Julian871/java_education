@@ -13,6 +13,7 @@ import AdminPanel from "./pages/admin/AdminPanel.tsx";
 import CreateRestaurant from "./pages/admin/CreateRestaurant.tsx";
 import ManageRestaurants from "./pages/admin/ManageRestaurants.tsx";
 import ManageDishes from "./pages/admin/ManageDishes.tsx";
+import RestaurantMenu from "./pages/customer/RestaurantMenu.tsx";
 
 const App: React.FC = () => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -110,6 +111,16 @@ const App: React.FC = () => {
                             </Layout>
                         ) : isAuthenticated ? (
                             <Navigate to="/" />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    } />
+
+                    <Route path="/restaurants/:restaurantId" element={
+                        isAuthenticated ? (
+                            <Layout>
+                                <RestaurantMenu />
+                            </Layout>
                         ) : (
                             <Navigate to="/login" />
                         )

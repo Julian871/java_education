@@ -135,7 +135,7 @@ const RestaurantList: React.FC = () => {
                             <Box sx={{ mt: 'auto' }}>
                                 <Button
                                     variant="contained"
-                                    color='success'
+                                    color="success"
                                     fullWidth
                                     component={Link}
                                     to={`/restaurants/${restaurant.id}`}
