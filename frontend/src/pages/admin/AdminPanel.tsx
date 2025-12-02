@@ -14,20 +14,13 @@ import {
 } from '@mui/material';
 import {
     Restaurant,
-    Fastfood,
-    Add,
     List
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const AdminPanel: React.FC = () => {
     const navigate = useNavigate();
-    const [error, setError] = useState<string | null>(null);
-
-    const handleCreateRestaurant = () => {
-        navigate('/admin/restaurants/create');
-        console.log('Navigate to create restaurant');
-    };
+    const [error] = useState<string | null>(null);
 
     const handleManageRestaurants = () => {
         navigate('/admin/restaurants');

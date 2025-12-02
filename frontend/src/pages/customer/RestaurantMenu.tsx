@@ -435,7 +435,7 @@ const RestaurantMenu: React.FC = () => {
                             const itemCount = getCartItemCount(dish.id);
 
                             return (
-                                <Grid item xs={12} sm={6} md={4} key={dish.id}>
+                                <Grid xs={12} sm={6} md={4} key={dish.id}>
                                     <Card sx={{
                                         height: '100%',
                                         display: 'flex',

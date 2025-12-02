@@ -15,7 +15,7 @@ import {
     Chip,
     Button,
     CircularProgress,
-    Alert
+    Alert,
 } from '@mui/material';
 import {
     Email,
@@ -23,6 +23,7 @@ import {
     CalendarToday,
     LocationOn,
     Edit,
+    ShoppingBag,
 } from '@mui/icons-material';
 import type {RootState} from '../../store';
 import { api } from '../../services/api';
@@ -151,12 +152,12 @@ const Profile: React.FC = () => {
                     </Avatar>
 
                     {/* Информация пользователя */}
-                    <Box>
+                    <Box sx={{ flexGrow: 1 }}>
                         <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
                             {user?.fullName || 'No Name'}
                         </Typography>
 
-                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
                             {user?.roles && user.roles.length > 0 ? (
                                 user.roles.map((role, index) => (
                                     <Chip
@@ -289,8 +290,8 @@ const Profile: React.FC = () => {
                     )}
                 </List>
 
-                {/* Кнопка редактирования */}
-                <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+                {/* Кнопки действий */}
+                <Box sx={{ mt: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                     <Button
                         variant="outlined"
                         color="success"
@@ -299,6 +300,20 @@ const Profile: React.FC = () => {
                         to="/profile/edit"
                     >
                         Edit Profile
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="warning"
+                        startIcon={<ShoppingBag />}
+                        component={Link}
+                        to="/orders"
+                        sx={{
+                            background: 'linear-gradient(45deg, #ff9800, #ffb74d)',
+                            fontWeight: 'bold',
+                            minWidth: 150
+                        }}
+                    >
+                        My Orders
                     </Button>
                 </Box>
             </Paper>

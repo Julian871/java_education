@@ -16,7 +16,7 @@ import {
     MenuItem,
     FormHelperText
 } from '@mui/material';
-import { ArrowBack, Save, Restaurant } from '@mui/icons-material';
+import { Save, Restaurant } from '@mui/icons-material';
 import { api } from '../../services/api';
 
 interface RestaurantRequestDto {
