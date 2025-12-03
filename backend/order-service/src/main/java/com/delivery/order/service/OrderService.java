@@ -115,6 +115,12 @@ public class OrderService {
         return orderMapper.toDto(order);
     }
 
+    public List<OrderResponseDto> getOrdersByUserId(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+
+        return orderMapper.toDtoList(orders);
+    }
+
     public void updateOrderStatus(Long orderId, String status) {
         validateStatus(status);
 

@@ -1,20 +1,158 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import type {RootState} from '../../store';
-import { Container, Typography, Paper } from '@mui/material';
+import type { RootState } from '../../store';
+import {
+    Container,
+    Typography,
+    Paper,
+    Box,
+    Grid,
+    Card,
+    CardContent,
+    Avatar,
+    Divider,
+    Stack,
+    Chip,
+    LinearProgress
+} from '@mui/material';
+import {
+    Restaurant,
+    ShoppingCart,
+    History,
+    Favorite,
+    LocationOn,
+    AccountCircle,
+    LocalOffer,
+    Star,
+    EmojiEvents,
+    AccessTime
+} from '@mui/icons-material';
 
 const Dashboard: React.FC = () => {
     const user = useSelector((state: RootState) => state.auth.user);
 
+    // Примерные данные для демонстрации
+    const userStats = {
+        totalOrders: 12,
+        favoriteRestaurants: 3,
+        activeAddresses: 2,
+        loyaltyPoints: 450
+    };
+
+    const orderStatus = {
+        completed: 12,
+        cancelled: 2,
+        successRate: 86 // процент успешных заказов
+    };
+
+    const recentActivity = [
+        { icon: <Restaurant />, text: "Ordered from Pizza Palace", time: "2 hours ago", status: "DELIVERED" },
+        { icon: <ShoppingCart />, text: "Added new delivery address", time: "1 day ago", status: "COMPLETED" },
+        { icon: <Favorite />, text: "Added 'Sushi Master' to favorites", time: "3 days ago", status: "COMPLETED" }
+    ];
+
+    const popularCategories = [
+        { name: "Pizza", count: 4, color: "#FF6B6B" },
+        { name: "Sushi", count: 3, color: "#4ECDC4" },
+        { name: "Burgers", count: 2, color: "#FFD166" },
+        { name: "Italian", count: 1, color: "#06D6A0" }
+    ];
+
     return (
-        <Container>
-            <Paper elevation={3} sx={{ padding: 4, marginTop: 4 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Welcome to Food Delivery!
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            {/* Приветствие пользователя */}
+            <Paper
+                elevation={3}
+                sx={{
+                    p: 4,
+                    mb: 4,
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}
+            >
+                {/* Декоративные элементы */}
+                <Box sx={{
+                    position: 'absolute',
+                    top: -50,
+                    right: -50,
+                    width: 200,
+                    height: 200,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.1)'
+                }} />
+                <Box sx={{
+                    position: 'absolute',
+                    bottom: -30,
+                    left: -30,
+                    width: 150,
+                    height: 150,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.05)'
+                }} />
+
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, position: 'relative', zIndex: 1 }}>
+                    <Avatar
+                        sx={{
+                            width: 80,
+                            height: 80,
+                            mr: 3,
+                            bgcolor: 'white',
+                            color: 'primary.main',
+                            border: '3px solid white'
+                        }}
+                    >
+                        {user?.fullName?.charAt(0) || <AccountCircle sx={{ fontSize: 40 }} />}
+                    </Avatar>
+                    <Box>
+                        <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                            Welcome, {user?.fullName || 'Food Lover'}! 🍕
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                            <Chip
+                                label="Gold Member"
+                                sx={{
+                                    bgcolor: 'rgba(255,215,0,0.2)',
+                                    color: 'gold',
+                                    fontWeight: 'bold'
+                                }}
+                                icon={<Star />}
+                            />
+                        </Box>
+                    </Box>
+                </Box>
+            </Paper>
+
+            {/* Промо блок */}
+            <Paper
+                sx={{
+                    p: 4,
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    color: 'white',
+                    textAlign: 'center'
+                }}
+            >
+                <LocalOffer sx={{ fontSize: 50, mb: 2 }} />
+                <Typography variant="h5" component="h3" gutterBottom fontWeight="bold">
+                    🎁 Special Treat Just For You!
                 </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Hello, {user?.fullName || 'No name'}!
+                <Typography variant="body1" sx={{ mb: 3, opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
+                    As a valued member, you have access to exclusive offers and early access to new restaurants.
                 </Typography>
+                <Box sx={{
+                    display: 'inline-block',
+                    p: 2,
+                    bgcolor: 'rgba(255,255,255,0.2)',
+                    borderRadius: 2,
+                    backdropFilter: 'blur(10px)'
+                }}>
+                    <Typography variant="h6" fontFamily="monospace" fontWeight="bold">
+                        MEMBER777
+                    </Typography>
+                </Box>
             </Paper>
         </Container>
     );

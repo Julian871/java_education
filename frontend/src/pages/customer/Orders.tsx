@@ -204,11 +204,8 @@ const Orders: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status.toUpperCase()) {
             case 'PLACED': return 'warning';
-            case 'PENDING': return 'warning';
-            case 'CONFIRMED': return 'info';
-            case 'PREPARING': return 'secondary';
-            case 'READY_FOR_DELIVERY': return 'primary';
-            case 'OUT_FOR_DELIVERY': return 'info';
+            case 'COOKING': return 'secondary';
+            case 'READY': return 'primary';
             case 'DELIVERED': return 'success';
             case 'CANCELLED': return 'error';
             default: return 'default';

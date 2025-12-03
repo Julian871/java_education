@@ -138,10 +138,7 @@ const ManageUsers: React.FC = () => {
 
     // Просмотр заказов пользователя
     const handleViewOrders = (user: UserResponseDto) => {
-        // Здесь можно перейти на страницу с заказами пользователя
-        // Например: navigate(`/admin/users/${user.id}/orders`);
-        // Или отобразить модальное окно с заказами
-        alert(`View orders for user: ${user.fullName} (ID: ${user.id})`);
+        navigate(`/admin/users/${user.id}/orders`);
     };
 
     const handleBack = () => {

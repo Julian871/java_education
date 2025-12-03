@@ -6,6 +6,8 @@ import com.delivery.order.entity.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
     @Mapping(target = "id", ignore = true)
@@ -14,4 +16,5 @@ public interface OrderMapper {
     Order toEntity(OrderRequestDto orderRequestDto);
 
     OrderResponseDto toDto(Order order);
+    List<OrderResponseDto> toDtoList(List<Order> orders);
 }

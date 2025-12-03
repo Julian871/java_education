@@ -40,6 +40,13 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderResponseDto> getOrdersByUserId(@PathVariable Long id) {
+        return orderService.getOrdersByUserId(id);
+    }
+
     @PatchMapping("/{orderId}/status")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
