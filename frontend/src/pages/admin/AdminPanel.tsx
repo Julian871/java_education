@@ -14,7 +14,8 @@ import {
 } from '@mui/material';
 import {
     Restaurant,
-    List
+    List,
+    ManageAccounts
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,6 +25,10 @@ const AdminPanel: React.FC = () => {
 
     const handleManageRestaurants = () => {
         navigate('/admin/restaurants');
+    };
+
+    const handleManageUsers = () => {
+        navigate('/admin/users');
     };
 
     return (
@@ -82,6 +87,48 @@ const AdminPanel: React.FC = () => {
                                     startIcon={<List />}
                                     color='success'
                                     onClick={handleManageRestaurants}
+                                    fullWidth
+                                    sx={{ mx: 2 }}
+                                >
+                                    Manage
+                                </Button>
+                            </CardActions>
+                        </Card>
+                    </Grid>
+
+                    {/* Управление юзерами */}
+                    <Grid item xs={12} sm={6} md={4}>
+                        <Card sx={{
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            transition: '0.3s',
+                            '&:hover': {
+                                transform: 'translateY(-4px)',
+                                boxShadow: 6
+                            }
+                        }}>
+                            <CardContent sx={{ flexGrow: 1 }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    mb: 2
+                                }}>
+                                    <ManageAccounts sx={{ fontSize: 60 }} />
+                                </Box>
+                                <Typography variant="h6" component="h2" align="center" gutterBottom>
+                                    Manage Users
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" align="center">
+                                    Edit or delete users
+                                </Typography>
+                            </CardContent>
+                            <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<List />}
+                                    color='success'
+                                    onClick={handleManageUsers}
                                     fullWidth
                                     sx={{ mx: 2 }}
                                 >
