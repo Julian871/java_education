@@ -34,7 +34,7 @@ services:
     networks:
       - food-delivery-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_RESTAURANT_USER} -d ${POSTGRES_USER_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_RESTAURANT_USER} -d ${POSTGRES_RESTAURANT_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,7 +54,7 @@ services:
     networks:
       - food-delivery-network
     healthcheck: # ← ДОБАВИТЬ HEALTHCHECK
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_ORDER_USER} -d ${POSTGRES_USER_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_ORDER_USER} -d ${POSTGRES_ORDER_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
