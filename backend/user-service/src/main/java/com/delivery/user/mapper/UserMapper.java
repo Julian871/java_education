@@ -8,6 +8,7 @@ import com.delivery.user.entity.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -22,6 +23,8 @@ public interface UserMapper {
     Set<AddressRequestDto> toAddressDtoSet(Set<Address> addresses);
 
     AddressRequestDto toAddressDto(Address address);
+
+    List<UserResponseDto> toDtoList(List<User> users);
 
     UserResponseDto toDto(User user);
 

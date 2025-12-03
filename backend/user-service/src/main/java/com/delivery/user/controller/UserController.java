@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -24,6 +26,20 @@ public class UserController {
     public UserResponseDto getCurrentUser() {
         long userId = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.getCurrentUser(userId);
+    }
+
+    @GetMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserResponseDto> getUsers() {
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponseDto getUserById(@PathVariable Long id) {
+        return userService.getCurrentUser(id);
     }
 
     @PutMapping("/me")
