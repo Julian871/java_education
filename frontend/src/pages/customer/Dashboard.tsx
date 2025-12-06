@@ -6,57 +6,17 @@ import {
     Typography,
     Paper,
     Box,
-    Grid,
-    Card,
-    CardContent,
     Avatar,
-    Divider,
-    Stack,
     Chip,
-    LinearProgress
 } from '@mui/material';
 import {
-    Restaurant,
-    ShoppingCart,
-    History,
-    Favorite,
-    LocationOn,
     AccountCircle,
     LocalOffer,
     Star,
-    EmojiEvents,
-    AccessTime
 } from '@mui/icons-material';
 
 const Dashboard: React.FC = () => {
     const user = useSelector((state: RootState) => state.auth.user);
-
-    // Примерные данные для демонстрации
-    const userStats = {
-        totalOrders: 12,
-        favoriteRestaurants: 3,
-        activeAddresses: 2,
-        loyaltyPoints: 450
-    };
-
-    const orderStatus = {
-        completed: 12,
-        cancelled: 2,
-        successRate: 86 // процент успешных заказов
-    };
-
-    const recentActivity = [
-        { icon: <Restaurant />, text: "Ordered from Pizza Palace", time: "2 hours ago", status: "DELIVERED" },
-        { icon: <ShoppingCart />, text: "Added new delivery address", time: "1 day ago", status: "COMPLETED" },
-        { icon: <Favorite />, text: "Added 'Sushi Master' to favorites", time: "3 days ago", status: "COMPLETED" }
-    ];
-
-    const popularCategories = [
-        { name: "Pizza", count: 4, color: "#FF6B6B" },
-        { name: "Sushi", count: 3, color: "#4ECDC4" },
-        { name: "Burgers", count: 2, color: "#FFD166" },
-        { name: "Italian", count: 1, color: "#06D6A0" }
-    ];
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
