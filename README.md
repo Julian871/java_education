@@ -8,17 +8,21 @@ This platform enables customers to browse restaurants, place orders, and track d
 
 ### 🎯 Features
 
-**👥 Customer Features**
-- Browse restaurants and menus
-- Add items to cart
-- Place and track orders
-- User profile management
+### 👥 Customer Features
+- 🏠 Browse restaurants with search and filter capabilities
+- 🍽️ View restaurant menus with dish details
+- 🛒 Add items to cart with quantity management
+- 💳 Place orders with multiple payment methods
+- 📊 Track order status in real-time
+- 👤 User profile management with address book
 
-**⚙️ Admin Features**
-- Restaurant and menu management
-- Order status management
-- User management
-- Analytics dashboard
+### ⚙️ Admin Features
+- 🏪 Restaurant management (CRUD operations)
+- 🍲 Dish management per restaurant
+- 📦 Order management with status updates
+- 👥 User management and role assignment
+- 📊 View user order history
+- 🔐 Role-based access control (ADMIN role)
 
 ## 🏗️ Architecture
 
@@ -30,9 +34,12 @@ This platform enables customers to browse restaurants, place orders, and track d
 | **order-service** | 8083 | Orders, carts, payment processing | order_db |
 
 ### Frontend
-- **React Application** (Port 3000) - Responsive UI with role-based views
-- **State Management** - Redux for authentication, cart, and user data
-- **API Communication** - Axios for REST API calls
+- **Port:** 3000 (React Development Server)
+- **Framework:** React 18 with TypeScript
+- **Routing:** React Router v6 with protected routes
+- **State Management:** Redux Toolkit
+- **UI Library:** Material-UI (MUI) v5
+- **Build Tool:** Vite
 
 ## 🛠️ Technology Stack
 
@@ -45,10 +52,12 @@ This platform enables customers to browse restaurants, place orders, and track d
 - Docker, Docker Compose
 
 ### Frontend
-- React 18, React Router
-- Redux Toolkit
-- Axios for API calls
-- Modern CSS/UI framework
+- React 18 with TypeScript
+- Redux Toolkit for state management
+- React Router v6 for routing
+- Material-UI v5 for components
+- Axios for API communication
+- Vite as build tool
 
 ## 📚 API Documentation
 
@@ -60,25 +69,14 @@ This platform enables customers to browse restaurants, place orders, and track d
 ### OpenAPI Specs
 - JSON specs available at `/v3/api-docs` for each service
 
-## 🚀 Quick Start
-
 ### Prerequisites
-- Java 17+
-- Node.js 16+
-- Docker & Docker Compose
-- PostgreSQL (or use Docker)
+- Docker 20.10+
+- Docker Compose 2.0+
+- Git
 
-### 1. Database Setup
+### Quick Start with Docker
 
-```bash
-# Start all databases using Docker
-docker-compose up -d
-
-# Check container status
-docker ps
-
-# View database logs
-docker-compose logs
-
-# Stop databases
-docker-compose down
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd food-delivery-platform
