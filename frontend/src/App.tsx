@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import type {RootState} from './store';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import Dashboard from './pages/customer/Dashboard';
 import Layout from './components/common/Layout';
 import RestaurantList from "./pages/customer/RestaurantList.tsx";
 import Profile from "./pages/customer/Profile.tsx";
@@ -32,23 +31,15 @@ const App: React.FC = () => {
                     <Route path="/register" element={<Register />} />
 
                     <Route path="/" element={
-                        isAuthenticated ? (
-                            <Layout>
-                                <Dashboard />
-                            </Layout>
-                        ) : (
-                            <Navigate to="/login" />
-                        )
+                        <Layout>
+                            <RestaurantList />
+                        </Layout>
                     } />
 
                     <Route path="/restaurants" element={
-                        isAuthenticated ? (
-                            <Layout>
-                                <RestaurantList />
-                            </Layout>
-                        ) : (
-                            <Navigate to="/login" />
-                        )
+                        <Layout>
+                            <RestaurantList />
+                        </Layout>
                     } />
 
                     <Route path="/profile" element={
@@ -120,13 +111,9 @@ const App: React.FC = () => {
                     } />
 
                     <Route path="/restaurants/:restaurantId" element={
-                        isAuthenticated ? (
-                            <Layout>
-                                <RestaurantMenu />
-                            </Layout>
-                        ) : (
-                            <Navigate to="/login" />
-                        )
+                        <Layout>
+                            <RestaurantMenu />
+                        </Layout>
                     } />
 
                     <Route path="/orders" element={

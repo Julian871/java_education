@@ -36,6 +36,8 @@ import {
     Remove
 } from '@mui/icons-material';
 import { api } from '../../services/api';
+import {useSelector} from "react-redux";
+import type {RootState} from "../../store";
 
 // Типы для заказа
 interface OrderItemRequestDto {
@@ -69,6 +71,8 @@ interface RestaurantResponseDto {
 const RestaurantMenu: React.FC = () => {
     const { restaurantId } = useParams<{ restaurantId: string }>();
     const navigate = useNavigate();
+
+    const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
     // Основные состояния
     const [restaurant, setRestaurant] = useState<RestaurantResponseDto | null>(null);
@@ -125,8 +129,22 @@ const RestaurantMenu: React.FC = () => {
         }
     }, [restaurantId]);
 
-    // Управление корзиной
     const handleAddToCart = (dish: DishResponseDto) => {
+        // 👇 Проверяем авторизацию
+        if (!isAuthenticated) {
+            // Сохраняем информацию о ресторане и блюде для возврата после логина
+            localStorage.setItem('redirectAfterLogin', `/restaurants/${restaurantId}`);
+            localStorage.setItem('dishToAdd', JSON.stringify({
+                id: dish.id,
+                name: dish.name
+            }));
+
+            // Перенаправляем на логин
+            navigate('/login');
+            return;
+        }
+
+        // Если пользователь авторизован - добавляем в корзину
         setCart(prev => {
             const existing = prev.find(item => item.dish.id === dish.id);
             if (existing) {
@@ -138,6 +156,13 @@ const RestaurantMenu: React.FC = () => {
             } else {
                 return [...prev, { dish, quantity: 1 }];
             }
+        });
+
+        // 👇 Показываем уведомление об успешном добавлении
+        setSnackbar({
+            open: true,
+            message: `"${dish.name}" added to cart!`,
+            severity: 'success'
         });
     };
 
@@ -165,6 +190,23 @@ const RestaurantMenu: React.FC = () => {
     };
 
     const handleCheckoutClick = () => {
+        // 👇 Проверяем авторизацию
+        if (!isAuthenticated) {
+            localStorage.setItem('redirectAfterLogin', `/restaurants/${restaurantId}`);
+            navigate('/login');
+            return;
+        }
+
+        // Если корзина пустая - показываем сообщение
+        if (cart.length === 0) {
+            setSnackbar({
+                open: true,
+                message: 'Your cart is empty!',
+                severity: 'error'
+            });
+            return;
+        }
+
         setCheckoutDialogOpen(true);
     };
 
@@ -515,7 +557,7 @@ const RestaurantMenu: React.FC = () => {
                                                     startIcon={<ShoppingCart />}
                                                     sx={{ fontWeight: 'bold' }}
                                                 >
-                                                    Add to Cart
+                                                    {isAuthenticated ? 'Add to Cart' : 'Sign in to Order'}
                                                 </Button>
                                             )}
                                         </Box>

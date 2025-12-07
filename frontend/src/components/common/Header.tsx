@@ -8,6 +8,7 @@ import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 const Header: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
     const user = useSelector((state: RootState) => state.auth.user);
 
@@ -15,32 +16,29 @@ const Header: React.FC = () => {
 
     const handleLogout = () => {
         dispatch(logout());
-        navigate('/login');
+        navigate('/');
     };
 
     return (
         <AppBar position="static">
             <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{ flexGrow: 1 }}
+                >
                     <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
-                        Food Delivery
+                        🍔 Food Delivery
                     </Link>
                 </Typography>
 
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     {isAuthenticated ? (
-                        <>
-                            <Button
-                                variant="outlined"
+                        <><Button
                                 color="inherit"
                                 component={Link}
-                                to="/restaurants"
-                                sx={{ borderColor: 'rgba(255,255,255,0.3)' }}
+                                to="/profile"
                             >
-                                🍽️ Restaurants
-                            </Button>
-
-                            <Button color="inherit" component={Link} to="/profile">
                                 👤 {user.fullName}
                             </Button>
 
@@ -51,17 +49,25 @@ const Header: React.FC = () => {
                                     component={Link}
                                     to="/admin"
                                 >
-                                    admin
+                                    Admin Panel
                                 </Button>
                             )}
 
-                            <Button variant="contained" color="warning" onClick={handleLogout}>
+                            <Button
+                                variant="contained"
+                                color="warning"
+                                onClick={handleLogout}
+                            >
                                 Logout
                             </Button>
                         </>
                     ) : (
                         <>
-                            <Button color="inherit" component={Link} to="/login">
+                            <Button
+                                color="inherit"
+                                component={Link}
+                                to="/login"
+                            >
                                 Login
                             </Button>
                             <Button
