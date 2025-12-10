@@ -10,7 +10,10 @@ import com.delivery.restaurant.mapper.RestaurantMapper;
 import com.delivery.restaurant.repository.DishRepository;
 import com.delivery.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,24 +30,18 @@ public class RestaurantPublicService {
     private final DishRepository dishRepository;
     private final DishMapper dishMapper;
 
-    public List<RestaurantResponseDto> getRestaurants(String cuisine, Double minRating) {
-        Specification<Restaurant> spec = Specification.where(null);
+    public Page<RestaurantResponseDto> getRestaurants(String cuisine, int page) {
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("name").ascending());
 
         if (cuisine != null && !cuisine.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("cuisine"), cuisine.toLowerCase()));
+            return restaurantRepository
+                    .findByCuisineContainingIgnoreCase(cuisine, pageable)
+                    .map(restaurantMapper::toDto);
         }
 
-        if (minRating != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("rating"), minRating));
-        }
-
-        List<Restaurant> restaurants = restaurantRepository.findAll(spec);
-
-        return restaurants.stream()
-                .map(restaurantMapper::toDto)
-                .collect(Collectors.toList());
+        return restaurantRepository
+                .findAll(pageable)
+                .map(restaurantMapper::toDto);
     }
 
     public RestaurantResponseDto getRestaurant(Long id) {

@@ -4,6 +4,7 @@ import com.delivery.restaurant.dto.response.DishResponseDto;
 import com.delivery.restaurant.dto.response.RestaurantResponseDto;
 import com.delivery.restaurant.service.RestaurantPublicService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,13 @@ public class RestaurantPublicController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public List<RestaurantResponseDto> getRestaurants(@RequestParam(required = false) String cuisine,
-                                                      @RequestParam(required = false) Double rating) {
-        return restaurantPublicService.getRestaurants(cuisine, rating);
+    public Page<RestaurantResponseDto> getRestaurants(
+            @RequestParam(required = false) String cuisine,
+            @RequestParam(defaultValue = "0") int page
+    )
+
+    {
+        return restaurantPublicService.getRestaurants(cuisine, page);
     }
 
     @GetMapping("/{id}")
