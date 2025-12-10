@@ -1,5 +1,6 @@
 package com.delivery.order.service;
 
+import com.delivery.order.dto.request.OrderItemRequestDto;
 import com.delivery.order.dto.request.OrderRequestDto;
 import com.delivery.order.dto.response.OrderResponseDto;
 import com.delivery.order.entity.Order;
@@ -11,15 +12,15 @@ import com.delivery.order.repository.OrderItemRepository;
 import com.delivery.order.repository.OrderRepository;
 import com.delivery.order.repository.PaymentRepository;
 import com.delivery.order.util.JwtTokenProvider;
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,11 +32,24 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final PaymentRepository paymentRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final RestaurantServiceClient restaurantServiceClient;
 
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto, Long userId) {
 
+        try {
+            RestaurantDto restaurant = restaurantServiceClient
+                    .getRestaurantById(orderRequestDto.getRestaurantId());
+
+            if (restaurant == null) {
+                throw new ApiException("Restaurant not found", HttpStatus.NOT_FOUND);
+            }
+
+            validateDishes(orderRequestDto.getOrderItems(), restaurant);
+
+        } catch (FeignException.NotFound e) {
+            throw new ApiException("Restaurant not found", HttpStatus.NOT_FOUND);
+        }
 
         Integer totalPrice = orderRequestDto.getOrderItems().stream()
                 .mapToInt(item -> item.getPrice() * item.getQuantity())
@@ -72,21 +86,19 @@ public class OrderService {
         paymentRepository.save(payment);
         savedOrder.setPayment(payment);
 
-        //kafkaTemplate.send("order-created", createOrderCreatedEvent(savedOrder));
-
         return orderMapper.toDto(savedOrder);
     }
 
-    private Object createOrderCreatedEvent(Order order) {
-        return new Object() {
-            public final String eventType = "ORDER_CREATED";
-            public final Long orderId = order.getId();
-            public final Long userId = order.getUserId();
-            public final Long restaurantId = order.getRestaurantId();
-            public final String status = order.getStatus();
-            public final Integer totalAmount = order.getTotalPrice();
-            public final LocalDateTime createdAt = order.getOrderDate();
-        };
+    private void validateDishes(List<OrderItemRequestDto> orderItems, RestaurantDto restaurant) {
+        Set<Long> restaurantDishIds = restaurant.getDishes().stream()
+                .map(DishDto::getId)
+                .collect(Collectors.toSet());
+
+        for (OrderItemRequestDto item : orderItems) {
+            if (!restaurantDishIds.contains(item.getDishId())) {
+                throw new ApiException("Dish not found", HttpStatus.NOT_FOUND);
+            }
+        }
     }
 
     public List<OrderResponseDto> getOrders(HttpServletRequest request) {

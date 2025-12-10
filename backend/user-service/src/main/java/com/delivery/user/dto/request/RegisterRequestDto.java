@@ -1,5 +1,6 @@
 package com.delivery.user.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,5 +22,6 @@ public class RegisterRequestDto {
     @Size(min = 2, max = 20)
     private String fullName;
 
+    @Valid
     private Set<AddressRequestDto> addresses;
 }

@@ -1,10 +1,9 @@
 package com.delivery.order.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Data;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotEmpty;
+
 import java.util.List;
 
 @Data
@@ -15,9 +14,14 @@ public class OrderRequestDto {
     private Long restaurantId;
 
     @NotEmpty(message = "Order items cannot be empty")
+    @Valid
     private List<OrderItemRequestDto> orderItems;
 
     @NotNull(message = "Payment method is required")
     @NotBlank(message = "Payment method is required")
+    @Pattern(
+            regexp = "^(CARD|CASH|PAYPAL)$",
+            message = "Payment method must be CARD, CASH or PAYPAL"
+    )
     private String paymentMethod;
 }
