@@ -243,29 +243,6 @@ const Login: React.FC = () => {
                         sx={{ mb: 1 }}
                     />
 
-                    <Box sx={{ textAlign: 'right', mt: 1, mb: 2 }}>
-                        <Typography
-                            variant="body2"
-                            color="primary"
-                            sx={{
-                                cursor: 'pointer',
-                                '&:hover': { textDecoration: 'underline' },
-                                fontWeight: 500
-                            }}
-                            onClick={() => {
-                                if (!loading) {
-                                    setSnackbar({
-                                        open: true,
-                                        message: 'Password reset feature coming soon!',
-                                        severity: 'success'
-                                    });
-                                }
-                            }}
-                        >
-                            Forgot password?
-                        </Typography>
-                    </Box>
-
                     <Button
                         type="submit"
                         fullWidth
