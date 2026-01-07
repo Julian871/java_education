@@ -29,7 +29,6 @@ import {
     ArrowBack,
     Add,
     RestaurantMenu,
-    LocalDining
 } from '@mui/icons-material';
 import { restaurantApi } from '../../services/restaurantApi';
 

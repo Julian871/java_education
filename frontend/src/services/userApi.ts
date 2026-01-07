@@ -1,9 +1,11 @@
 import axios from 'axios';
 
-const USER_API_BASE_URL = 'http://localhost:8081';
+const USER_API_URL = import.meta.env.VITE_USER_API_URL || 'http://localhost:8081';
+
+console.log('👤 User API URL:', USER_API_URL);
 
 const userApi = axios.create({
-    baseURL: USER_API_BASE_URL,
+    baseURL: USER_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },

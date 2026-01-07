@@ -1,13 +1,15 @@
 import axios from 'axios';
 
-const RESTAURANT_API_BASE_URL = 'http://localhost:8082';
+const RESTAURANT_API_URL = import.meta.env.VITE_RESTAURANT_API_URL || 'http://localhost:8082';
+
+console.log('🍽️ Restaurant API URL:', RESTAURANT_API_URL);
 
 const restaurantApi = axios.create({
-    baseURL: RESTAURANT_API_BASE_URL,
+    baseURL: RESTAURANT_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000, // 10 секунд таймаут
+    timeout: 10000,
 });
 
 // Интерцептор для автоматической подстановки JWT токена

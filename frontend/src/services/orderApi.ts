@@ -1,9 +1,11 @@
 import axios from 'axios';
 
-const ORDER_API_BASE_URL = 'http://localhost:8083';
+const ORDER_API_URL = import.meta.env.VITE_ORDER_API_URL || 'http://localhost:8083';
+
+console.log('🛒 Order API URL:', ORDER_API_URL);
 
 const orderApi = axios.create({
-    baseURL: ORDER_API_BASE_URL,
+    baseURL: ORDER_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },

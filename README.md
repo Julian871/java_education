@@ -34,7 +34,7 @@ This platform enables customers to browse restaurants, place orders, and track d
 | **order-service** | 8083 | Orders, carts, payment processing | order_db |
 
 ### Frontend
-- **Port:** 3000 (React Development Server)
+- **Port:** 5173 (React Development Server)
 - **Framework:** React 18 with TypeScript
 - **Routing:** React Router v6 with protected routes
 - **State Management:** Redux Toolkit
@@ -44,11 +44,12 @@ This platform enables customers to browse restaurants, place orders, and track d
 ## 🛠️ Technology Stack
 
 ### Backend
-- Java 17, Spring Boot 3.x
+- Java 17, Spring Boot 3.2.0
 - Spring Security with JWT
-- Spring Data JPA, PostgreSQL
+- Spring Data JPA, PostgreSQL 15
+- Spring Cloud OpenFeign for inter-service communication
 - MapStruct, Lombok
-- Kafka (event-driven architecture)
+- Flyway for database migrations
 - Docker, Docker Compose
 
 ### Frontend
@@ -78,5 +79,14 @@ This platform enables customers to browse restaurants, place orders, and track d
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Julian871/java_education.git
    cd food-delivery-platform
+
+
+2. **Start all services:**
+   ```bash
+   docker-compose up --build
+   
+3. **Access the applications:**
+    - Frontend: http://localhost:5173
+    - Backend Services: 8081, 8082, 8083

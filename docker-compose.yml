@@ -53,7 +53,7 @@ services:
       - postgres_order_data:/var/lib/postgresql/data
     networks:
       - food-delivery-network
-    healthcheck: # ← ДОБАВИТЬ HEALTHCHECK
+    healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_ORDER_USER} -d ${POSTGRES_ORDER_DB}" ]
       interval: 10s
       timeout: 5s
@@ -124,6 +124,29 @@ services:
     networks:
       - food-delivery-network
 
+  # Frontend (Vite + React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8081
+      - VITE_RESTAURANT_API_URL=http://localhost:8082
+      - VITE_ORDER_API_URL=http://localhost:8083
+      - VITE_USER_API_URL=http://localhost:8081
+    depends_on:
+      - user-service
+      - restaurant-service
+      - order-service
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - /app/node_modules
+    networks:
+      - food-delivery-network
 volumes:
   postgres_user_data:
   postgres_restaurant_data:
